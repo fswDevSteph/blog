@@ -86,18 +86,18 @@ module.exports = router;
 
 //? Sample routes to test:
 // Retrieve all blog posts:
-// GET: http://localhost:5000/api/posts
+// GET: http://localhost:3001/api/posts
 
 // Retrieve a single blog post by its ID:
-// GET: http://localhost:5000/api/posts/:id (Replace :id with the ID of the blog post you want to retrieve)
+// GET: http://localhost:3001/api/posts/:id (Replace :id with the ID of the blog post you want to retrieve)
 
 // Create a new blog post:
-// POST: http://localhost:5000/api/posts
+// POST: http://localhost:3001/api/posts
 // JSON payload: Include the title, content, author, and date of the new blog post in the request body.
 
 // Update an existing blog post:
-// PATCH: http://localhost:5000/api/posts/:id (Replace :id with the ID of the blog post you want to update)
+// PATCH: http://localhost:3001/api/posts/:id (Replace :id with the ID of the blog post you want to update)
 // JSON payload: Include the fields(title, content, author, date) you want to update in the request body.
 
 // Delete a blog post:
-// DELETE: http://localhost:5000/api/posts/:id (Replace :id with the ID of the blog post you want to delete)
+// DELETE: http://localhost:3001/api/posts/:id (Replace :id with the ID of the blog post you want to delete)

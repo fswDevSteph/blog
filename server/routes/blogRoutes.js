@@ -62,3 +62,10 @@ router.delete('/:id', (req, res) => {
 });
 
 module.exports = router;
+//! This code sets up basic route handlers for CRUD operations on blog posts using an in-memory array blogPosts as our temporary data store. Will replace this with database operations using a tool like Mongoose for MongoDB later. 
+//? Sample routes to test:
+// GET http://localhost:5000/api/posts: Get all blog posts.
+// POST http://localhost:5000/api/posts: Create a new blog post (send JSON payload with title and content).
+// GET http://localhost:5000/api/posts/:id: Get a single blog post by ID.
+// PUT http://localhost:5000/api/posts/:id: Update a blog post by ID (send JSON payload with title and content).
+// DELETE http://localhost:5000/api/posts/:id: Delete a blog post by ID.

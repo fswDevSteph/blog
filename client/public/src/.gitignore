@@ -1,0 +1,10 @@
+# Node modules
+node_modules/
+
+# Production build
+/build/
+
+# Environment variables
+.env
+
+

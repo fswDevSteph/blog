@@ -1,71 +1,103 @@
-// blogRoutes.js
+// routes/blogRoutes.js
 
 const express = require('express');
 const router = express.Router();
+const BlogPost = require('../models/BlogPost'); // Import the BlogPost model
 
-// Example data (replace with MongoDB/Mongoose integration later)
-let posts = [
-    { id: 1, title: 'First Blog Post', content: 'Lorem ipsum dolor sit amet.' },
-    { id: 2, title: 'Second Blog Post', content: 'Consectetur adipiscing elit.' }
-];
-
-// GET all blog posts
-router.get('/', (req, res) => {
-    res.json(posts);
+// 1. Retrieve all blog posts
+router.get('/', async (req, res) => {
+    try {
+        const blogPosts = await BlogPost.find();
+        res.json(blogPosts);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-// GET a single blog post by ID
-router.get('/:id', (req, res) => {
-    const postId = parseInt(req.params.id);
-    const post = posts.find(post => post.id === postId);
-    if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
-    }
-    res.json(post);
+// 2. Retrieve a single blog post by its ID
+router.get('/:id', getBlogPost, (req, res) => {
+    res.json(res.blogPost);
 });
 
-// POST a new blog post
-router.post('/', (req, res) => {
-    const { title, content } = req.body;
-    if (!title || !content) {
-        return res.status(400).json({ message: 'Title and content are required' });
+// 3. Create a new blog post
+router.post('/', async (req, res) => {
+    const blogPost = new BlogPost({
+        title: req.body.title,
+        content: req.body.content,
+        author: req.body.author,
+        date: req.body.date
+    });
+    try {
+        const newBlogPost = await blogPost.save();
+        res.status(201).json(newBlogPost);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
-    const newPost = { id: posts.length + 1, title, content };
-    posts.push(newPost);
-    res.status(201).json(newPost);
 });
 
-// PUT update an existing blog post
-router.put('/:id', (req, res) => {
-    const postId = parseInt(req.params.id);
-    const { title, content } = req.body;
-    const postIndex = posts.findIndex(post => post.id === postId);
-    if (postIndex === -1) {
-        return res.status(404).json({ message: 'Post not found' });
+// 4. Update an existing blog post
+router.patch('/:id', getBlogPost, async (req, res) => {
+    if (req.body.title != null) {
+        res.blogPost.title = req.body.title;
     }
-    if (!title || !content) {
-        return res.status(400).json({ message: 'Title and content are required' });
+    if (req.body.content != null) {
+        res.blogPost.content = req.body.content;
     }
-    posts[postIndex] = { ...posts[postIndex], title, content };
-    res.json(posts[postIndex]);
+    if (req.body.author != null) {
+        res.blogPost.author = req.body.author;
+    }
+    if (req.body.date != null) {
+        res.blogPost.date = req.body.date;
+    }
+    try {
+        const updatedBlogPost = await res.blogPost.save();
+        res.json(updatedBlogPost);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
-// DELETE a blog post
-router.delete('/:id', (req, res) => {
-    const postId = parseInt(req.params.id);
-    const postIndex = posts.findIndex(post => post.id === postId);
-    if (postIndex === -1) {
-        return res.status(404).json({ message: 'Post not found' });
+// 5. Delete a blog post
+router.delete('/:id', getBlogPost, async (req, res) => {
+    try {
+        await res.blogPost.remove();
+        res.json({ message: 'Deleted blog post' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-    posts.splice(postIndex, 1);
-    res.json({ message: 'Post deleted successfully' });
 });
+
+// Middleware function to get a single blog post by its ID
+async function getBlogPost(req, res, next) {
+    let blogPost;
+    try {
+        blogPost = await BlogPost.findById(req.params.id);
+        if (blogPost == null) {
+            return res.status(404).json({ message: 'Cannot find blog post' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+    res.blogPost = blogPost;
+    next();
+}
 
 module.exports = router;
-//! This code sets up basic route handlers for CRUD operations on blog posts using an in-memory array blogPosts as our temporary data store. Will replace this with database operations using a tool like Mongoose for MongoDB later. 
+
 //? Sample routes to test:
-// GET http://localhost:5000/api/posts: Get all blog posts.
-// POST http://localhost:5000/api/posts: Create a new blog post (send JSON payload with title and content).
-// GET http://localhost:5000/api/posts/:id: Get a single blog post by ID.
-// PUT http://localhost:5000/api/posts/:id: Update a blog post by ID (send JSON payload with title and content).
-// DELETE http://localhost:5000/api/posts/:id: Delete a blog post by ID.
+// Retrieve all blog posts:
+// GET: http://localhost:5000/api/posts
+
+// Retrieve a single blog post by its ID:
+// GET: http://localhost:5000/api/posts/:id (Replace :id with the ID of the blog post you want to retrieve)
+
+// Create a new blog post:
+// POST: http://localhost:5000/api/posts
+// JSON payload: Include the title, content, author, and date of the new blog post in the request body.
+
+// Update an existing blog post:
+// PATCH: http://localhost:5000/api/posts/:id (Replace :id with the ID of the blog post you want to update)
+// JSON payload: Include the fields(title, content, author, date) you want to update in the request body.
+
+// Delete a blog post:
+// DELETE: http://localhost:5000/api/posts/:id (Replace :id with the ID of the blog post you want to delete)

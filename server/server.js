@@ -1,7 +1,7 @@
 // server.js
 
 const express = require('express');
-const blogRoutes = require('./routes/blogRoutes'); // Import blogRoutes
+const blogRoutes = require('./routes/api/blogRoutes'); // Import blogRoutes
 const app = express();
 const PORT = process.env.PORT || 3001;
 const mongoose = require('mongoose');

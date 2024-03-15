@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const BlogPost = require('../models/BlogPost'); // Import the BlogPost model
+const { BlogPost } = require('../../models'); // Import the BlogPost model
 
 // 1. Retrieve all blog posts
 router.get('/', async (req, res) => {
